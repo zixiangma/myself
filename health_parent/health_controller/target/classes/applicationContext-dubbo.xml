@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://code.alibabatech.com/schema/dubbo
+        http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+    <!--注册应用-->
+    <dubbo:application name="health_controller"/>
+    <!--注册zookeepr地址-->
+    <dubbo:registry address="zookeeper://127.0.0.1:2181"/>
+    <!--注解驱动-->
+    <dubbo:annotation package="com.mzx.controller"/>
+    <!--调用超时/启动时校验-->
+    <dubbo:consumer timeout="60000" check="false"/>
+</beans>
