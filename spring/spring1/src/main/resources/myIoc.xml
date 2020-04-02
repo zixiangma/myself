@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans>
+    <bean id="accountService" class="com.mzx.service.impl.AccountServiceImpl">
+        <property name="accountDao" ref="accountDao"/>
+    </bean>
+
+    <bean id="accountDao" class="com.mzx.dao.impl.AccountDaoImpl"/>
+</beans>

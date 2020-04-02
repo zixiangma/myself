@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--beans是配置文件的根标签-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd">
+     <!--bean标签,是给与bean对象创建信息的标签-->
+     <!--id是唯一表示,中间不能带有特殊符号,name是在有id属性时是别名,中间可以用, ; 空格 隔开代表多个别用-->
+     <!--没有id属性时,第一个别名默认为id,其余为别名-->
+     <!--scope属性是用来区分单例和多例的,多例时.每次调用获得的都是不同的对象;其中singleType代表单例-->
+     <!--protoType代表多例,在web工程里还有request值代表,创建的创建的值会放进request域中,session代表会放入session域中-->
+     <!--globalSession是分布式部署是放在通用session中-->
+     <!--init-method是创建对象时调用的初始化方法,值是方法名-->
+     <!--destroy-method是销毁对象时调用的方法,值是方法值-->
+     <!--factory-bean factory-method是工厂模式创建bean对象时用到的属性-->
+    <!--<bean id="" name="" class="" scope="" factory-bean="" factory-method="" init-method="" destroy-method="">-->
+        <!--constructor-arg标签,它是bean的子标签,其作用是使用构造方法的模式,实现依赖注入(DI)-->
+        <!--其中name/type/index 分别代表形参的名字,所属类,跟在形参中的位置,从0开始,三者写其中一个即可-->
+        <!--当需要注入的对象的类别是除基本类型外的类用ref来引用,只是bean对象的id,所以注入的前提是有这个bean对象-->
+        <!--当注入的对象时基本类型时用value属性,值会自动转换-->
+        <!--<constructor-arg name="" type="" index="" value="" ref=""></constructor-arg>-->
+        <!--<constructor-arg name="" type="" index="" value="" ref=""></constructor-arg>-->
+        <!--<constructor-arg name="" type="" index="" value="" ref=""></constructor-arg>-->
+
+        <!--property是bean的子标签,其作用是通过set方法来实现依赖注入(Di),其中name属性的值为set方法名,value和ref的作用-->
+        <!--与constructor-args相同-->
+        <!--<property name="" ref="" value=""></property>-->
+
+        <!--eg: 两种方法都支持集合注入,注入时需要用到它们的子标签 Array List Set Map,Array,List,Set通过value 和ref子标签注入-->
+        <!--Map 还需用它的子标签entry及其子标签value和ref注入-->
+    <!--</bean>-->
+
+    <!--IOC accountDao和accountService并将account注入到accountService-->
+    <bean id="accountDao" class="com.mzx.dao.impl.AccountDaoImpl"/>
+
+    <bean id="accountService" class="com.mzx.service.impl.AccountServiceImpl">
+        <!--property set方法注入-->
+        <property name="accountDao" ref="accountDao"/>
+    </bean>
+</beans>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/jdbc
+        http://www.springframework.org/schema/context/spring-jdbc.xsd"
+        >
+
+    <!--&lt;!&ndash;如果想使用注解开发,需要开启扫描器,指定基本包&ndash;&gt;-->
+    <!--<context:component-scan base-package="com.mzx"/>-->
+
+    <!--&lt;!&ndash;引用properties配置文件,整个项目只能有一个配置文件&ndash;&gt;-->
+    <!--<context:property-placeholder location="classpath:jdbc.properties"/>-->
+    <!--&lt;!&ndash;操作数据库需要使用DBUtils,这里使用Spring自带的JDBCTemple和自带的DataSource&ndash;&gt;-->
+
+    <!--&lt;!&ndash;创建dataSource&ndash;&gt;-->
+    <!--<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">-->
+        <!--<property name="driverClassName" value="${jdbc.driver}"/>-->
+        <!--<property name="url" value="${jdbc.url}"/>-->
+        <!--<property name="username" value="${jdbc.username}"/>-->
+        <!--<property name="password" value="${jdbc.password}"/>-->
+    <!--</bean>-->
+    <!--&lt;!&ndash;创建jdbcTemple&ndash;&gt;-->
+    <!--&lt;!&ndash;<bean id="jdbcTemple" class="org.springframework.jdbc.core.JdbcTemplate">&ndash;&gt;-->
+        <!--&lt;!&ndash;<property name="dataSource" ref="dataSource"/>&ndash;&gt;-->
+    <!--&lt;!&ndash;</bean>&ndash;&gt;-->
+</beans>
