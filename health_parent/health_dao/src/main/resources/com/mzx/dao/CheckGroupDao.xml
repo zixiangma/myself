@@ -3,11 +3,11 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.mzx.dao.CheckGroupDao">
-
-    <select id="findListByCondition" parameterType="string" resultMap="checkGroup">
+   <!--根据给定条件查询checkGroup-->
+    <select id="findByCondition" parameterType="string" resultType="checkGroup">
         select * from t_checkGroup
         <where>
-            <if test="value != null and value.length > 0">
+            <if test="_parameter != null and _parameter.length > 0">
                 and code like "%"#{value}"%"
                 or name like "%"#{value}"%"
                 or helpCode like "%"#{value}"%"
@@ -15,50 +15,55 @@
         </where>
     </select>
 
-    <resultMap id="checkGroup" type="checkGroup">
-        <id property="id" column="id"/>
-        <collection property="checkItems" ofType="checkItem"
-                    column="id"
-                    select="com.mzx.dao.CheckItemDao.findCheckListByCheckGroupId"
-        />
-    </resultMap>
-
+    <!--增加checkGroup项-->
     <insert id="add" parameterType="checkGroup">
-        insert into t_checkGroup(code,name,helpCode,sex,remark,attention)
+        insert into t_checkGroup (code,name,helpCode,sex,remark,attention)
         values (#{code},#{name},#{helpCode},#{sex},#{remark},#{attention})
-        <selectKey resultType="int" order="AFTER" keyProperty="id" keyColumn="id">
+        <selectKey keyColumn="id" keyProperty="id" resultType="int" order="AFTER">
             select last_insert_id()
         </selectKey>
     </insert>
 
-    <insert id="addRelation" parameterType="map">
-        insert into t_checkGroup_checkItem (checkItem_Id,checkGroup_Id)
-        values (#{checkItemId},#{checkGroupId})
+    <!--增加关联关系-->
+    <insert id="addRelationShip" parameterType="map">
+        insert into t_checkGroup_checkItem (checkGroup_id,checkItem_id)
+        values (#{checkGroupId},#{checkItemId})
     </insert>
 
-    <select id="findCheckItemNumByList" parameterType="list" resultType="int" >
-        select count(*) from t_checkItem
-        <where>
-            <foreach collection="list" open="id in (" close=")" separator="," item="id">
-                #{id}
-            </foreach>
-        </where>
+    <!--根据id获得对象-->
+    <select id="findById" parameterType="int" resultType="checkGroup">
+        select * from t_checkGroup where id = #{id}
     </select>
 
-    <delete id="deleteRelation" parameterType="int">
-        delete from t_checkGroup_checkItem where checkGroup_id= #{id}
+    <!--根据id获得所有关联的checkItem id-->
+    <select id="findCheckItemIdsByCheckGroupId" resultType="int" parameterType="int">
+        select checkItem_id from t_checkGroup_checkItem where checkGroup_id = #{id}
+    </select>
+
+    <!--根据id修改对应checkGroup对象的信息-->
+    <update id="edit" parameterType="checkGroup">
+        update t_checkGroup set
+        code = #{code},name = #{name},helpCode = #{helpCode},sex = #{sex},remark = #{remark},attention = #{attention}
+        where id = #{id}
+    </update>
+
+    <!--根据id删除对应checkGroup项的所有checkItem关联关系-->
+    <delete id="deleteRelationShip" parameterType="int">
+        delete from t_checkGroup_checkItem where checkGroup_id = #{id}
     </delete>
 
-    <select id="findSetMealNumByCheckGroupId" parameterType="int" resultType="int">
-        select count(*) from t_setmeal_checkGroup where checkGroup_id = #{id}
-    </select>
-
+    <!--根据id删除对应的checkGroup对象-->
     <delete id="delete" parameterType="int">
         delete from t_checkGroup where id = #{id}
     </delete>
 
-    <update id="edit" parameterType="checkGroup">
-        update t_checkGroup set code = #{code},name = #{name},helpCode = #{helpCode},sex = #{sex},remark = #{remark},attention = #{attention}
-        where id = #{id}
-    </update>
+    <!--根据checkGroupId获得所有关联checkItem的数量-->
+    <select id="findCheckItemCountByCheckGroupId" parameterType="int" resultType="int">
+        select count(*) from t_checkGroup_checkItem where checkGroup_id = #{id}
+    </select>
+
+    <!--根据checkGroupId获得所有关联setMeal的数量-->
+    <select id="findSetMealCountByCheckGroupId" parameterType="int" resultType="int">
+        select count(*) from t_setMeal_checkGroup where checkGroup_id = #{id]}
+    </select>
 </mapper>

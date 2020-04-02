@@ -31,9 +31,4 @@
         select count(*) from t_checkGroup_checkItem where checkItem_id = #{id}
     </select>
 
-    <select id="findCheckListByCheckGroupId" parameterType="int" resultType="checkItem">
-        select * from t_checkItem where id in
-        (select checkItem_id from t_checkGroup_checkItem where checkGroup_id = #{id})
-    </select>
-
 </mapper>

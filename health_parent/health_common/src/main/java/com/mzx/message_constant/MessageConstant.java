@@ -65,8 +65,6 @@ public class MessageConstant {
     public static final String GET_SETMEAL_LIST_SUCCESS = "查询套餐列表数据成功";
     public static final String GET_SETMEAL_LIST_FAIL = "查询套餐列表数据失败";
     public static final String DELETE_CHECKITEM_CONFILCT_FAIL = "该检查项正在被引用,删除失败";
-    public static final String DELETE_CHECKGROUP_CONFILCT_FAIL = "该检查组正在被引用,删除失败";
-    public static final String EDIT_CHECKGROUP_CONFILCT_FAIL = "您选中的检查项已不存在,请重修编辑";
-
-
+    public static final String DELETE_CHECKGROUP_CONFILCT_FAIL = "该检查组中含有检查项";
+    public static final String DELETE_CHECKGROUP_SETMEAL_CONFILCT_FAIL = "该检查组正在被引用,删除失败";
 }

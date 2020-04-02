@@ -55,7 +55,7 @@
                 <div class="box">
                     <div class="filter-container">
                         <el-input placeholder="编码/名称/助记码" v-model="pagination.queryString" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter"></el-input>
-                        <el-button @click="search()" class="dalfBut">查询</el-button>
+                        <el-button @click="findPage()" class="dalfBut">查询</el-button>
                         <el-button type="primary" class="butT" @click="handleCreate()">新建</el-button>
                     </div>
                     <el-table size="small" current-row-key="id" :data="dataList" stripe highlight-current-row>
@@ -282,66 +282,45 @@
             methods: {
                 //编辑
                 handleEdit() {
-                    var param = {
-                        formData:this.formData,
-                        checkitemIds:this.checkitemIds
-                    };
-                    axios.post("../checkGroup/edit.do",param)
+                    axios.post("../checkGroup/edit.do?checkitemIds=" + this.checkitemIds,this.formData)
                         .then(response => {
+                            this.$message({
+                                message:response.data.message,
+                                type:response.data.flag ? 'success':'error'
+                            });
                             if (response.data.flag) {
-                                this.$message.success(response.data.message);
                                 this.dialogFormVisible4Edit = false;
-                            } else {
-                                this.$message.error(response.data.message);
+                                this.findPage();
                             }
-                            this.findPage();
-                        }).catch(error =>{
-                            console.log(error);
-                    })
+                        }).catch(error => {
+                       console.log(error);
+                    });
                 },
                 //添加
                 handleAdd () {
-                    var param = {
-                        formData:this.formData,
-                        checkitemIds:this.checkitemIds
-                    };
-                    axios.post("../checkGroup/add.do",param)
+                    axios.post("../checkGroup/add.do?checkitemIds=" + this.checkitemIds,this.formData)
                         .then(response => {
-                            if (response.data.flag) {
-                                this.$message.success(response.data.message);
+                            this.$message({
+                                message:response.data.message,
+                                type:response.data.flag ? 'success':'error'
+                            });
+                            if (response.data.flag){
                                 this.dialogFormVisible = false;
-                            } else {
-                                this.$message.error(response.data.message);
+                                this.findPage();
                             }
-                            this.findPage();
-                        }).catch(error => {
-                            console.log(error);
-                    });
+                        })
                 },
                 //分页查询
                 findPage() {
                     axios.post("../checkGroup/findPage.do",this.pagination)
                         .then(response => {
+                            this.$message({
+                                message:response.data.message,
+                                type:response.data.flag ? 'success':'error'
+                            });
                             if (response.data.flag) {
                                 this.dataList = response.data.data.rows;
                                 this.pagination.total = response.data.data.total;
-                            } else {
-                                this.$message.error(response.data.message);
-                            }
-                        }).catch(error => {
-                            console.log(error);
-                    });
-                    var params = {
-                        currentPage : 1,
-                        pageSize:0,
-                        queryString:null
-                    };
-                    axios.post("../checkItem/findPage.do",params)
-                        .then(response => {
-                            if (response.data.flag) {
-                                this.tableData = response.data.data.rows;
-                            } else {
-                                this.$message.error(response.data.message);
                             }
                         }).catch(error => {
                         console.log(error);
@@ -350,21 +329,72 @@
                 // 重置表单
                 resetForm() {
                     this.formData = {};
-                    this.checkitemIds =[];
+                    this.checkitemIds = [];
                 },
                 // 弹出添加窗口
                 handleCreate() {
                     this.resetForm();
-                    this.dialogFormVisible=true;
+                    var param = {
+                        currentPage: 1,
+                        pageSize:0,
+                        queryString:null,
+                    };
+                    axios.post("../checkItem/findPage.do",param)
+                        .then(response => {
+                            this.$message({
+                                message:response.data.message,
+                                type:response.data.flag ? 'success':'error'
+                            });
+                            if (response.data.flag) {
+                                this.tableData = response.data.data.rows;
+                                this.dialogFormVisible = true;
+                            }
+                        })
                 },
                 // 弹出编辑窗口
                 handleUpdate(row) {
-                    this.formData = row;
-                    var items = row.checkItems;
-                    for (var i = 0;i < items.length;i++) {
-                        this.checkitemIds.push(items[i].id)
-                    }
-                    this.dialogFormVisible4Edit = true;
+                    axios.get("../checkGroup/findById.do?id=" + row.id)
+                        .then(response => {
+                            this.$message({
+                                message:response.data.message,
+                                type:response.data.flag ? 'success':'error'
+                            });
+                            if (response.data.flag) {
+                                var param = {
+                                    currentPage: 1,
+                                    pageSize:0,
+                                    queryString:null,
+                                };
+                                this.formData = response.data.data;
+                                axios.post("../checkItem/findPage.do",param)
+                                    .then(response => {
+                                        this.$message({
+                                            message:response.data.message,
+                                            type:response.data.flag ? 'success':'error'
+                                        });
+                                        if (response.data.flag) {
+                                            this.tableData = response.data.data.rows;
+                                            axios.get("../checkGroup/findCheckItemIdsByCheckGroupId.do?id=" + row.id)
+                                                .then(response => {
+                                                    this.$message({
+                                                        message:response.data.message,
+                                                        type:response.data.flag ? 'success':'error'
+                                                    });
+                                                    if (response.data.flag) {
+                                                        this.checkitemIds = response.data.data;
+                                                        this.dialogFormVisible4Edit = true;
+                                                    }
+                                                }).catch(error => {
+                                               console.log(error);
+                                            });
+                                        }
+                                    }).catch(error => {
+                                        console.log(error);
+                                })
+                            }
+                        }).catch(error => {
+                       console.log(error);
+                    });
                 },
                 //切换页码
                 handleCurrentChange(currentPage) {
@@ -373,20 +403,28 @@
                 },
                 // 删除
                 handleDelete(row) {
-                    axios.post("../checkGroup/delete.do","id=" + row.id)
-                        .then(response => {
-                            this.$message({
-                                type: response.data.flag ?'success':'error',
-                                message: response.data.message
-                            });
-                            this.findPage();
-                        }).catch(error=> {
+                    this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(() => {
+                        axios.get("../checkGroup/delete.do?id=" + row.id)
+                            .then(response => {
+                                this.$message({
+                                    message:response.data.message,
+                                    type:response.data.flag ? 'success':'error'
+                                });
+                                this.findPage();
+                            }).catch(error => {
                             console.log(error);
+                        });
+                    }).catch(() => {
+                        this.$message({
+                            type: 'info',
+                            message: '已取消删除'
+                        });
                     });
-                },
-                search(){
-                    this.pagination.currentPage = 1;
-                    this.findPage();
+
                 }
             }
         })

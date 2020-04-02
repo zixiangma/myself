@@ -14,6 +14,4 @@ public interface CheckItemDao {
     void delete(Integer id);
 
     int findCheckGroupNumBycheckItemId(Integer Id);
-
-    List<CheckItem> findCheckListByCheckGroupId(Integer checkGroupId);
 }
